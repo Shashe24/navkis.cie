@@ -347,18 +347,27 @@
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        import { auth } from './src/firebase.js';
+        import { onAuthStateChanged, signOut } from 'firebase/auth';
+
         // Check authentication status when page loads
-        window.onload = function() {
-            if (!sessionStorage.getItem('authenticated')) {
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
                 window.location.href = 'login.html';
             }
-        }
+        });
 
         // Logout function
-        function handleLogout() {
-            sessionStorage.removeItem('authenticated');
-            window.location.href = 'login.html';
+        window.handleLogout = async function() {
+            try {
+                await signOut(auth);
+                sessionStorage.removeItem('authenticated');
+                sessionStorage.removeItem('currentUser');
+                window.location.href = 'login.html';
+            } catch (error) {
+                console.error('Error signing out:', error);
+            }
         }
 
         // Navigation function
