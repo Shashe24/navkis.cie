@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - NAVKIS's College of Engineering</title>
+    <title>Register - NAVKIS's College of Engineering</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -32,7 +32,7 @@
             z-index: -1;
         }
 
-        .login-container {
+        .register-container {
             background-color: white;
             padding: 2rem;
             border-radius: 8px;
@@ -42,12 +42,12 @@
             z-index: 1;
         }
 
-        .login-header {
+        .register-header {
             text-align: center;
             margin-bottom: 2rem;
         }
 
-        .login-header h1 {
+        .register-header h1 {
             color: #2c3e50;
             margin: 0;
             font-size: 1.8rem;
@@ -72,8 +72,8 @@
             box-sizing: border-box;
         }
 
-        .login-button {
-            background-color: #3498db;
+        .register-button {
+            background-color: #27ae60;
             color: white;
             border: none;
             padding: 1rem;
@@ -84,21 +84,21 @@
             transition: background-color 0.3s;
         }
 
-        .login-button:hover {
-            background-color: #2980b9;
+        .register-button:hover {
+            background-color: #219a52;
         }
 
-        .register-link {
+        .login-link {
             text-align: center;
             margin-top: 1rem;
         }
 
-        .register-link a {
+        .login-link a {
             color: #3498db;
             text-decoration: none;
         }
 
-        .register-link a:hover {
+        .login-link a:hover {
             text-decoration: underline;
         }
 
@@ -112,12 +112,20 @@
 </head>
 <body>
     <div class="background-image"></div>
-    <div class="login-container">
-        <div class="login-header">
+    <div class="register-container">
+        <div class="register-header">
             <h1>NAVKIS College of Engineering</h1>
-            <p>CIE Calculator Login</p>
+            <p>Create New Account</p>
         </div>
-        <form id="loginForm" onsubmit="return handleLogin(event)">
+        <form id="registerForm" onsubmit="return handleRegister(event)">
+            <div class="form-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="fullname" name="fullname" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+            </div>
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>
@@ -126,42 +134,58 @@
                 <label for="password">Password</label>
                 <input type="password" id="password" name="password" required>
             </div>
-            <button type="submit" class="login-button">Login</button>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required>
+            </div>
+            <button type="submit" class="register-button">Register</button>
         </form>
         <div id="errorMessage" class="error-message"></div>
-        <div class="register-link">
-            Don't have an account? <a href="register.html">Register here</a>
+        <div class="login-link">
+            Already have an account? <a href="login.html">Login here</a>
         </div>
     </div>
 
     <script>
-        function handleLogin(event) {
+        function handleRegister(event) {
             event.preventDefault();
             
+            const fullname = document.getElementById('fullname').value;
+            const email = document.getElementById('email').value;
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
             
-            // Get users from localStorage
+            if (password !== confirmPassword) {
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = 'Passwords do not match';
+                errorMessage.style.display = 'block';
+                return false;
+            }
+            
+            // Store user data in localStorage
             const users = JSON.parse(localStorage.getItem('users') || '[]');
             
-            // Find user
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                // Set authentication in sessionStorage
-                sessionStorage.setItem('authenticated', 'true');
-                sessionStorage.setItem('currentUser', JSON.stringify({
-                    username: user.username,
-                    fullname: user.fullname
-                }));
-                
-                // Redirect to main page
-                window.location.href = 'index.html';
-            } else {
+            // Check if username already exists
+            if (users.some(user => user.username === username)) {
                 const errorMessage = document.getElementById('errorMessage');
-                errorMessage.textContent = 'Invalid username or password';
+                errorMessage.textContent = 'Username already exists';
                 errorMessage.style.display = 'block';
+                return false;
             }
+            
+            // Add new user
+            users.push({
+                fullname,
+                email,
+                username,
+                password // In a real application, this should be hashed
+            });
+            
+            localStorage.setItem('users', JSON.stringify(users));
+            
+            // Redirect to login page
+            window.location.href = 'login.html';
             
             return false;
         }
