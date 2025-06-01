@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - NAVKIS's College of Engineering</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+            position: relative;
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://th.bing.com/th/id/OIP.PalSmfjCaUXPDKFpHM0L0AHaE8?rs=1&pid=ImgDetMain');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.2;
+            z-index: -1;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            z-index: 1;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-header h1 {
+            color: #2c3e50;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .login-button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: background-color 0.3s;
+        }
+
+        .login-button:hover {
+            background-color: #2980b9;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-image"></div>
+    <div class="login-container">
+        <div class="login-header">
+            <h1>NAVKIS College of Engineering</h1>
+            <p>CIE Calculator Login</p>
+        </div>
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="login-button">Login</button>
+        </form>
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // For demonstration purposes, using a simple check
+            // In a real application, this should be handled securely on the server
+            if (username === 'admin' && password === 'admin123') {
+                window.location.href = 'index.html';
+            } else {
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = 'Invalid username or password';
+                errorMessage.style.display = 'block';
+            }
+            
+            return false;
+        }
+    </script>
+</body>
+</html>
