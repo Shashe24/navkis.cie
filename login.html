@@ -119,8 +119,8 @@
         </div>
         <form id="loginForm" onsubmit="return handleLogin(event)">
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
@@ -134,32 +134,32 @@
         </div>
     </div>
 
-    <script>
-        function handleLogin(event) {
+    <script type="module">
+        import { auth } from './src/firebase.js';
+        import { signInWithEmailAndPassword } from 'firebase/auth';
+
+        window.handleLogin = async function(event) {
             event.preventDefault();
             
-            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
+            const errorMessage = document.getElementById('errorMessage');
             
-            // Get users from localStorage
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            
-            // Find user
-            const user = users.find(u => u.username === username && u.password === password);
-            
-            if (user) {
-                // Set authentication in sessionStorage
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Store auth token in sessionStorage
                 sessionStorage.setItem('authenticated', 'true');
                 sessionStorage.setItem('currentUser', JSON.stringify({
-                    username: user.username,
-                    fullname: user.fullname
+                    email: user.email,
+                    uid: user.uid
                 }));
                 
                 // Redirect to main page
                 window.location.href = 'index.html';
-            } else {
-                const errorMessage = document.getElementById('errorMessage');
-                errorMessage.textContent = 'Invalid username or password';
+            } catch (error) {
+                errorMessage.textContent = 'Invalid email or password';
                 errorMessage.style.display = 'block';
             }
             

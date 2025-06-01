@@ -127,16 +127,12 @@
                 <input type="email" id="email" name="email" required>
             </div>
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
-            </div>
-            <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" required minlength="6">
             </div>
             <div class="form-group">
                 <label for="confirmPassword">Confirm Password</label>
-                <input type="password" id="confirmPassword" name="confirmPassword" required>
+                <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6">
             </div>
             <button type="submit" class="register-button">Register</button>
         </form>
@@ -146,46 +142,40 @@
         </div>
     </div>
 
-    <script>
-        function handleRegister(event) {
+    <script type="module">
+        import { auth } from './src/firebase.js';
+        import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+
+        window.handleRegister = async function(event) {
             event.preventDefault();
             
             const fullname = document.getElementById('fullname').value;
             const email = document.getElementById('email').value;
-            const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessage = document.getElementById('errorMessage');
             
             if (password !== confirmPassword) {
-                const errorMessage = document.getElementById('errorMessage');
                 errorMessage.textContent = 'Passwords do not match';
                 errorMessage.style.display = 'block';
                 return false;
             }
             
-            // Store user data in localStorage
-            const users = JSON.parse(localStorage.getItem('users') || '[]');
-            
-            // Check if username already exists
-            if (users.some(user => user.username === username)) {
-                const errorMessage = document.getElementById('errorMessage');
-                errorMessage.textContent = 'Username already exists';
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                // Update user profile with full name
+                await updateProfile(user, {
+                    displayName: fullname
+                });
+                
+                // Redirect to login page
+                window.location.href = 'login.html';
+            } catch (error) {
+                errorMessage.textContent = error.message;
                 errorMessage.style.display = 'block';
-                return false;
             }
-            
-            // Add new user
-            users.push({
-                fullname,
-                email,
-                username,
-                password // In a real application, this should be hashed
-            });
-            
-            localStorage.setItem('users', JSON.stringify(users));
-            
-            // Redirect to login page
-            window.location.href = 'login.html';
             
             return false;
         }
